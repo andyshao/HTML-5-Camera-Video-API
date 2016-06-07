@@ -4,7 +4,7 @@
 (function () {
     $('#reader').html5_qrcode(function (data) {
             // do something when code is read
-            console.log(data);
+            $("#result").text(data);
         },
         function (error) {
             $("#progressBar").remove();
