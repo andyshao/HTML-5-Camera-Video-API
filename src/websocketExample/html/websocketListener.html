@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML 5 Camera & Video API</title>
+    <link rel="stylesheet" href="../css/websocketListener.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src='../js/canvasHandler.js'></script>
+    <script src='../js/websocketListener.js'></script>
+</head>
+<body>
+<h1>HTML5 Camera & Video API - Listening on commands through Web Socket</h1>
+
+<div id="content"></div>
+<div>
+    <progress id="progressBar" max="100" value="10"></progress>
+</div>
+<div>
+    <video id='video'></video>
+    <canvas id='canvas'></canvas>
+    <button id='activateRemoteControlButton'>Let others control me through a websocket :-)</button>
+    <div id="disableRemoteControlSection">
+        <span>You are being remote controlled</span>
+        <button>Take control back over</button>
+    </div>
+</div>
+</body>
+</html>
