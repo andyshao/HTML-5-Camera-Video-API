@@ -3,24 +3,23 @@ $(function () {
 
     const DEFAULT_FRAME_RATE = 100;
     const WIDTH = 600;
-    const HEIGHT = 420;
 
-    var activateRemoteControlButton = document.getElementById('activateRemoteControlButton');
-    var disableRemoteControlSection = document.getElementById('disableRemoteControlSection');
-    var progressBar = document.getElementById('progressBar');
+    window.CanvasHandler = { onNewMessage: onNewMessage};
+
+    var activateRemoteControlButton = $('#activateRemoteControlButton');
+    var disableRemoteControlSection = $('#disableRemoteControlSection');
+    var progressBar = $('#progressBar');
     var video = document.getElementById('video');
-    var canvas = document.getElementById('canvas');
-    var con = canvas.getContext('2d');
+    var canvas = $('#canvas');
+    var con = canvas[0].getContext('2d');
     var isStreaming = false;
     var isRemoteControlled = false;
     var currentInterval;
     var filter;
+    var height;
+
 
     init();
-
-    var canvasHandler = { onNewMessage: onNewMessage};
-    window.CanvasHandler = canvasHandler;
-    return;
 
     function init() {
         navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
@@ -41,8 +40,8 @@ $(function () {
             );
             video.addEventListener('canplay', onCanPlay, false);
             video.addEventListener('play', onPlay, false);
-            activateRemoteControlButton.addEventListener('click', activateRemoteControl, false);
-            disableRemoteControlSection.addEventListener('click', disableRemoteControl, false);
+            activateRemoteControlButton.click(activateRemoteControl);
+            disableRemoteControlSection.click(disableRemoteControl);
         }
         else {
             alert('Sorry, the browser you are using doesn\'t support getUserMedia');
@@ -54,14 +53,15 @@ $(function () {
         progressBar.value = 50;
         if (!isStreaming) {
             // videoWidth isn't always set correctly in all browsers
-            canvas.setAttribute('width', WIDTH);
-            canvas.setAttribute('height', HEIGHT);
+            if (video.videoWidth > 0) height = video.videoHeight / (video.videoWidth / WIDTH);
+            canvas.attr('width', WIDTH);
+            canvas.attr('height', height);
             // Reverse the canvas image
             con.translate(WIDTH, 0);
             con.scale(-1, 1);
             isStreaming = true;
-            progressBar.style.visibility = 'hidden';
-            progressBar.value = 75;
+            progressBar.css('visibility', 'hidden');
+            progressBar.val(75);
         }
     }
 
@@ -70,8 +70,8 @@ $(function () {
         currentInterval = setInterval(function () {
             if (!isStreaming || video.paused || video.ended) return;
 
-            con.fillRect(0, 0, WIDTH, HEIGHT);
-            con.drawImage(video, 0, 0, WIDTH, HEIGHT);
+            con.fillRect(0, 0, WIDTH, height);
+            con.drawImage(video, 0, 0, WIDTH, height);
 
             if(isRemoteControlled) {
                 applyFilter();
@@ -83,18 +83,18 @@ $(function () {
 
     function activateRemoteControl() {
         isRemoteControlled = true;
-        activateRemoteControlButton.style.visibility = 'hidden';
-        disableRemoteControlSection.style.visibility = 'visible';
+        activateRemoteControlButton.css("visibility", 'hidden');
+        disableRemoteControlSection.css("visibility", 'visible');
     }
 
     function disableRemoteControl() {
         isRemoteControlled = false;
-        activateRemoteControlButton.style.visibility = 'visible';
-        disableRemoteControlSection.style.visibility = 'hidden';
+        activateRemoteControlButton.css("visibility", 'visible');
+        disableRemoteControlSection.css("visibility", 'hidden');
     }
 
     function applyFilter() {
-        var imageData = con.getImageData(0, 0, WIDTH, HEIGHT);
+        var imageData = con.getImageData(0, 0, WIDTH, height);
         var data = imageData.data;
 
         switch (filter) {
@@ -186,14 +186,14 @@ $(function () {
         }
 
         function blur() {
-            $("#canvas").css("-webkit-filter", "blur(10px)");
-            $("#canvas").css("filter", "blur(10px)");
+            canvas.css("-webkit-filter", "blur(10px)");
+            canvas.css("filter", "blur(10px)");
         }
     }
 
     function resetCanvas() {
-        $("#canvas").css("-webkit-filter", "");
-        $("#canvas").css("filter", "");
+        canvas.css("-webkit-filter", "");
+        canvas.css("filter", "");
     }
 
     function onNewMessage(message) {

@@ -1,8 +1,9 @@
 $(function () {
     "use strict";
 
-    var content = $('#content');
-    var activateRemoteControlButton = $('#activateRemoteControlButton');
+    const SERVER_TIMEOUT = 3000;
+
+    var errorContent = $('#errorContent');
 
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -27,15 +28,14 @@ $(function () {
             input.attr('disabled', 'disabled').val('Unable to comminucate '
                 + 'with the WebSocket server.');
         }
-    }, 3000);
+    }, SERVER_TIMEOUT);
 
-    return;
 
     function onConnectionOpen() {
         console.log("connection setup");
     }
     function onConnectionError() {
-        content.html($('<p>', { text: 'Sorry, but there\'s some problem with your ' + 'connection or the server is down.' } ));
+        errorContent.html($('<p>', { text: 'Sorry, but there\'s some problem with your ' + 'connection or the server is down.' } ));
     }
 
     function onIncomingMessage(message) {
@@ -55,7 +55,7 @@ $(function () {
     }
 
     function showErrorMessageThatWebSocketIsNotSupported() {
-        content.html($('<p>', { text: 'Sorry, but your browser doesn\'t ' + 'support WebSockets.'}));
+        errorContent.html($('<p>', { text: 'Sorry, but your browser doesn\'t ' + 'support WebSockets.'}));
     }
 
 });
